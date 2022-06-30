@@ -1,4 +1,5 @@
 import lang
+from subprocess import call
 import typer
 
 app = typer.Typer()
@@ -25,6 +26,7 @@ def deploy(
 ):
     if force:
         typer.echo(f"Deploying {name} version {version}")
+        runner = call("./auto_update_script.sh", shell=True)
     else:
         typer.echo("Deployment process canceled")   
 
