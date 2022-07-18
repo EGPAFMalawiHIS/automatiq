@@ -1,6 +1,7 @@
 
 import subprocess
 import os
+import fileinput
 
 def update_api():
     dir_name1="/var/www/BHT-EMR-API"
@@ -11,18 +12,17 @@ def update_api():
     process = subprocess.run(["git", "checkout", "v4.15.15"], stdout=subprocess.PIPE)
     print ("Describing Head")
     #process = subprocess.Popen(["git", "describe ", "> HEAD "], stdout=subprocess.PIPE)
-    filepath1="Gemfile.lock"
+    filepath1= "Gemfile.lock"
     if os.path.exists(filepath1):
-        os.remove(filePath1)
+        os.remove(filepath1)
     else:
+        
         print("Can not delete the file as it doesn't exists")
-    # print ("Removing Gemfile.lock")
-    # file1="Gemfile.lock"
-    # #os.remove(file1)
+   
     print ("Installing Local Gems")
     os.system("bundle install --local")
     print ("running bin_update art")
-    subprocess.call("./bin/update_art_metadata.sh")
+    os.system("./bin/update_art_metadata.sh development")
 update_api()
 
 def update_Core():
@@ -40,8 +40,11 @@ def update_Core():
     print(ip_address)
     api_port=input("Enter API port the facility uses: ")
     print(api_port)
-    subprocess.call(["sed -i 's/0.0.0.0/'$ip_address'/g' config.json"], shell=True)
-    subprocess.call(["sed -i 's/3000/'$api_port'/g' config.json"],shell=True)
+    for line in fileinput.input("config.json", inplace=True):
+            print(line.replace("0.0.0.0", ip_address)),
+            print(line.replace("3000", api_port)),
+    fileinput.close() 
+
     print ("The following parameters have been ammended in config.json")
     print ("IP address :", ip_address)
     print ("API port   :", api_port)
