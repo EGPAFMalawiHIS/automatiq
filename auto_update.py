@@ -1,7 +1,11 @@
+#! /usr/bin/python
 
+#from ipaddress import ip_address
+from ipaddress import ip_address
 import subprocess
 import os
 import fileinput
+import sys
 
 def update_api():
     dir_name1="/var/www/BHT-EMR-API"
@@ -40,10 +44,10 @@ def update_Core():
     print(ip_address)
     api_port=input("Enter API port the facility uses: ")
     print(api_port)
-    for line in fileinput.input("config.json", inplace=True):
-            print(line.replace("0.0.0.0", ip_address)),
-            print(line.replace("3000", api_port)),
-    fileinput.close() 
+    for line in fileinput.input("config.json", inplace=1):
+            print (line.replace("0.0.0.0", ip_address), end="")
+    for line in fileinput.input("config.json", inplace=1):
+            print (line.replace("3000",api_port),end="")
 
     print ("The following parameters have been ammended in config.json")
     print ("IP address :", ip_address)
