@@ -3,19 +3,18 @@
 import subprocess
 import os
 import fileinput
-from dotenv import load_dotenv
-load_dotenv()
 
-def update_api(dir_name1:str):
+def update_api(dir_name1:str, version:str):
     #dir_name="/var/www/BHT-EMR-API"
     #dir_name2="HIS-Core-release"
     #print ("Entering BHT-EMR-API")
-    os.chdir(dir_name1)
+    os.chdir("/var/www/BHT-EMR-API")
+
     print ("Checkout to latest tag")
-    #process=subprocess.run(["git", "checkout", os.environ.get('API_VERSION')], stdout=subprocess.PIPE)
+    process=subprocess.run(["git", "checkout", version], stdout=subprocess.PIPE)
     print ("Describing Head")
     os.system("git describe HEAD")
-    filepath1= os.getenv('PATH1')
+    filepath1= "Gemfile.lock"
     if os.path.exists(filepath1):
         os.remove(filepath1)
     else:
@@ -27,13 +26,12 @@ def update_api(dir_name1:str):
     print ("running bin_update art")
     os.system("./bin/update_art_metadata.sh development")
 
-update_api(dir_name1=os.environ.get('APP_DIR1'))
-
 
 def update_Core(dir_name2:str):
     #print ("=>Changing directory..........")
     os.chdir(dir_name2)
     print ("=>Checkout to latest tag in Core..........")
+
     print ("=>Describing Head............")
     os.system("git describe HEAD")
     print ("create the configuration file by copying config.json.example to config.json........")
@@ -52,6 +50,5 @@ def update_Core(dir_name2:str):
     print ("IP address :", ip_address)
     print ("API port   :", api_port)
     print ("THANK YOU")
-update_Core(dir_name2=os.environ.get('APP_DIR2'))
 
 
