@@ -4,9 +4,14 @@ import subprocess
 import os
 import fileinput
 import config
+import validation
 
 
 def update_api(module_name: str, version: str) -> bool:
+
+    if not validation.dir_exist(config.module_dirs[module_name]):
+        print("Directory does not exist")
+        return False
 
     os.chdir(config.module_dirs[module_name])
 
@@ -15,9 +20,8 @@ def update_api(module_name: str, version: str) -> bool:
     print("Checkout to latest tag")
 
     process = subprocess.run(["git", "checkout", version], stdout=subprocess.PIPE)
-    
-    print("_______________________________________________________________")
 
+    print("_______________________________________________________________")
 
     print("Describing Head")
 
@@ -32,7 +36,6 @@ def update_api(module_name: str, version: str) -> bool:
         print("Can not delete the file as it doesn't exists")
         print("_______________________________________________________________")
 
-
     print("Installing Local Gems")
 
     os.system("bundle install --local")
@@ -41,20 +44,18 @@ def update_api(module_name: str, version: str) -> bool:
 
     print("_______________________________________________________________")
 
-
     os.system("./bin/update_art_metadata.sh development")
 
     return True
 
 
-def update_core(module_name: str, version:str)-> bool:
+def update_core(module_name: str, version: str) -> bool:
 
     # print ("=>Changing directory..........")
     os.chdir(config.module_dirs[module_name])
     print("Checkout to latest tag in Core..........")
 
     print("_______________________________________________________________")
-
 
     print("Describing Head")
 
