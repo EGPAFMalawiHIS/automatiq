@@ -1,7 +1,7 @@
-import lang
+import config
 from subprocess import call
 import typer
-import auto_update
+import deploy_fns
 
 app = typer.Typer()
 
@@ -9,11 +9,11 @@ app = typer.Typer()
 def modules(name: str = typer.Option("", help="Name of a module.")):
     """List of modules that are available for deployment."""
 
-    if name in lang.app_modules:
-        typer.echo(lang.app_modules[name])
+    if name in config.app_modules:
+        typer.echo(config.app_modules[name])
 
     elif name == "":
-        for module in lang.app_modules:
+        for module in config.app_modules:
             typer.echo(module)
 
     else:
@@ -29,10 +29,10 @@ def deploy(
         typer.echo(f"Deploying {name} version {version}")
         if name == "api":
             print("Deploying API")
-            auto_update.update_api(name,version)
+            deploy_fns.update_api(name,version)
         elif name == "core":
             print("Deploying Core")
-            auto_update.update_Core(name,version)
+            deploy_fns.update_core(name,version)
 
     else:
         typer.echo("Deployment process canceled")   

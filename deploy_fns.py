@@ -3,16 +3,21 @@
 import subprocess
 import os
 import fileinput
-import lang
+import config
 
 
 def update_api(module_name: str, version: str) -> bool:
 
-    os.chdir(lang.module_dirs[module_name])
+    os.chdir(config.module_dirs[module_name])
+
+    print("_______________________________________________________________")
 
     print("Checkout to latest tag")
 
     process = subprocess.run(["git", "checkout", version], stdout=subprocess.PIPE)
+    
+    print("_______________________________________________________________")
+
 
     print("Describing Head")
 
@@ -25,6 +30,8 @@ def update_api(module_name: str, version: str) -> bool:
     else:
 
         print("Can not delete the file as it doesn't exists")
+        print("_______________________________________________________________")
+
 
     print("Installing Local Gems")
 
@@ -32,22 +39,33 @@ def update_api(module_name: str, version: str) -> bool:
 
     print("running bin_update art")
 
+    print("_______________________________________________________________")
+
+
     os.system("./bin/update_art_metadata.sh development")
 
     return True
 
 
-def update_Core(module_name: str, version:str)-> bool:
+def update_core(module_name: str, version:str)-> bool:
 
     # print ("=>Changing directory..........")
-    os.chdir(lang.module_dirs[module_name])
-    print("=>Checkout to latest tag in Core..........")
+    os.chdir(config.module_dirs[module_name])
+    print("Checkout to latest tag in Core..........")
 
-    print("=>Describing Head............")
+    print("_______________________________________________________________")
+
+
+    print("Describing Head")
+
+    print("_______________________________________________________________")
+
     os.system("git describe HEAD")
     print(
         "create the configuration file by copying config.json.example to config.json........"
     )
+    print("_______________________________________________________________")
+
     os.popen("cp config.json.example config.json")
     print("Configuring IP address and Port in config.json")
     ip_address = input("Enter IP address of the facility: ")
@@ -59,9 +77,16 @@ def update_Core(module_name: str, version:str)-> bool:
     for line in fileinput.input("config.json", inplace=1):
         print(line.replace("3000", api_port), end="")
 
+    print("_______________________________________________________________")
     print("The following parameters have been ammended in config.json")
+    print("_______________________________________________________________")
+
     print("IP address :", ip_address)
+    print("_______________________________________________________________")
+
     print("API port   :", api_port)
+    print("_______________________________________________________________")
+
     print("THANK YOU")
 
     return True
