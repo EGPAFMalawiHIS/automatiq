@@ -37,9 +37,10 @@ def update_api(module_name: str, version: str) -> bool:
     return True
 
 
-def update_Core(dir_name2: str):
+def update_Core(module_name: str, version:str)-> bool:
+
     # print ("=>Changing directory..........")
-    os.chdir(dir_name2)
+    os.chdir(lang.module_dirs[module_name])
     print("=>Checkout to latest tag in Core..........")
 
     print("=>Describing Head............")
@@ -62,3 +63,5 @@ def update_Core(dir_name2: str):
     print("IP address :", ip_address)
     print("API port   :", api_port)
     print("THANK YOU")
+
+    return True

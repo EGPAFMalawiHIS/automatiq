@@ -30,6 +30,9 @@ def deploy(
         if name == "api":
             print("Deploying API")
             auto_update.update_api(name,version)
+        elif name == "core":
+            print("Deploying Core")
+            auto_update.update_Core(name,version)
 
     else:
         typer.echo("Deployment process canceled")   

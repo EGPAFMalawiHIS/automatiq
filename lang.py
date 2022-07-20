@@ -6,4 +6,5 @@ app_modules = {
 
 module_dirs = {
     "api": "/var/www/BHT-EMR-API",
+    "core": "/var/www/HIS-Core"
 }
