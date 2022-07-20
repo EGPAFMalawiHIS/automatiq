@@ -3,35 +3,37 @@
 import subprocess
 import os
 import fileinput
+from dotenv import load_dotenv
+load_dotenv()
 
-def update_api():
-    dir_name1="/var/www/BHT-EMR-API"
+def update_api(dir_name1:str):
+    #dir_name="/var/www/BHT-EMR-API"
     #dir_name2="HIS-Core-release"
-    print ("Entering BHT-EMR-API")
+    #print ("Entering BHT-EMR-API")
     os.chdir(dir_name1)
     print ("Checkout to latest tag")
-    process = subprocess.run(["git", "checkout", "v4.15.15"], stdout=subprocess.PIPE)
+    #process=subprocess.run(["git", "checkout", os.environ.get('API_VERSION')], stdout=subprocess.PIPE)
     print ("Describing Head")
     os.system("git describe HEAD")
-    filepath1= "Gemfile.lock"
+    filepath1= os.getenv('PATH1')
     if os.path.exists(filepath1):
         os.remove(filepath1)
     else:
         
         print("Can not delete the file as it doesn't exists")
    
-    print ("Installing Local Gems..............")
+    print ("Installing Local Gems")
     os.system("bundle install --local")
-    print ("running bin_update_art_metadata.sh.............")
+    print ("running bin_update art")
     os.system("./bin/update_art_metadata.sh development")
-update_api()
 
-def update_Core():
-    dir_name2="/var/www/HIS-Core-release"
-    print ("=>Changing directory..........")
+update_api(dir_name1=os.environ.get('APP_DIR1'))
+
+
+def update_Core(dir_name2:str):
+    #print ("=>Changing directory..........")
     os.chdir(dir_name2)
     print ("=>Checkout to latest tag in Core..........")
-    process = subprocess.run(["git", "checkout", "v1.2.7"], stdout=subprocess.PIPE)
     print ("=>Describing Head............")
     os.system("git describe HEAD")
     print ("create the configuration file by copying config.json.example to config.json........")
@@ -50,5 +52,6 @@ def update_Core():
     print ("IP address :", ip_address)
     print ("API port   :", api_port)
     print ("THANK YOU")
-update_Core()
+update_Core(dir_name2=os.environ.get('APP_DIR2'))
+
 
