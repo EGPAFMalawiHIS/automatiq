@@ -57,6 +57,9 @@ def update_core(module_name: str, version: str) -> bool:
 
     print("_______________________________________________________________")
 
+    process = subprocess.run(["git", "checkout", version], stdout=subprocess.PIPE)
+
+
     print("Describing Head")
 
     print("_______________________________________________________________")
