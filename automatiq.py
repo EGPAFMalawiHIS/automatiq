@@ -32,7 +32,7 @@ def deploy(
 
 @app.command()
 def update(
-    app_id = 0
+    app_id: int
 ):
     try: 
         if app_id == 1:

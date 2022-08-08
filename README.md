@@ -5,10 +5,10 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 sudo apt install sshpass
 
 #SET UP
-1. install typer
+1. # install typer
    pip install "typer[all]"
    
-2. instll sshpass
+2. # instll sshpass
    sudo apt install sshpass
 
 # Running updates
@@ -17,4 +17,4 @@ sudo apt install sshpass
 # updating HIS-Core
   python3 automatiq.py update 2
 # update both BHT-EMR-API and HIS-core
-  python3 automatiq,py update
+  python3 automatiq,py update 0
