@@ -8,6 +8,6 @@ read -s password
 cd /var/www/BHT-EMR-API
 rm -rf log/development.log
 
-echo starting to transfer files
+echo starting to transfer files...
 
 sshpass -p $password rsync -r --progress /var/www/BHT-EMR-API/ $username@$ip_address:/var/www/BHT-EMR-API
