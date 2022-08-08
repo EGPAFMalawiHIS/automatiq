@@ -2,9 +2,7 @@
 Intuitive and "cool" CLI that allows you to deploy Health Information Systems with ease. It is as simple as running "deploy <app>" and everything is set up under the hood for you. 
 
 
-sudo apt install sshpass
-
-#SET UP
+# SET UP
 1. # install pip
    sudo apt-get update
    sudo apt-get -y install python3-pip
