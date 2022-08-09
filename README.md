@@ -9,7 +9,7 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
    pip3 --version
 
 2. # install typer
-   pip install "typer[all]"
+   pip3 install typer
 3. # install paramiko
    pip install paramiko
    
@@ -23,4 +23,4 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 # updating HIS-Core
   python3 automatiq.py update 2
 # update both BHT-EMR-API and HIS-core
-  python3 automatiq,py update 0
+  python3 automatiq.py update 0
