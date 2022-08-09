@@ -2,11 +2,11 @@
 echo "____________________________________________"
 echo "Entering BHT-EMR-API"
 echo "____________________________________________"
-cd BHT-EMR-API
+cd /var/www/BHT-EMR-API
 echo "____________________________________________"
 echo "Checkout to latest tag"
 echo "____________________________________________"
-git checkout v4.15.17 -f
+git checkout v4.15.18 -f
 echo "____________________________________________"
 echo "Describing Head"
 echo "____________________________________________"

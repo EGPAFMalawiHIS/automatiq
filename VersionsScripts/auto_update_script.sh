@@ -1,12 +1,36 @@
 #!/bin/bash
 echo "____________________________________________"
+echo "Entering BHT-EMR-API"
+echo "____________________________________________"
+cd /var/www/BHT-EMR-API
+echo "____________________________________________"
+echo "Checkout to latest tag"
+echo "____________________________________________"
+git checkout v4.15.15 -f
+echo "____________________________________________"
+echo "Describing Head"
+echo "____________________________________________"
+git describe > HEAD
+echo "____________________________________________"
+echo "Removing Gemfile.lock"
+echo "____________________________________________"
+rm Gemfile.lock
+echo "____________________________________________"
+echo "Installing Local Gems"
+echo "____________________________________________"
+bundle install --local
+echo "____________________________________________"
+echo "running bin_update art"
+echo "____________________________________________"
+./bin/update_art_metadata.sh development
+echo "____________________________________________"
 echo "Changing directory"
 echo "____________________________________________"
-cd /var/www/HIS-Core
+cd ../HIS-Core
 echo "____________________________________________"
 echo "Checkout to latest tag in Core"
 echo "____________________________________________"
-git checkout v1.2.9 -f
+git checkout v1.2.7 -f
 echo "____________________________________________"
 echo "Describing Head"
 echo "____________________________________________"
