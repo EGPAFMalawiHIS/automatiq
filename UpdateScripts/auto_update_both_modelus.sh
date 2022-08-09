@@ -10,4 +10,7 @@ rm -rf log/development.log
 echo starting to transfer files...
 
 sshpass -p $password rsync -r --progress /var/www/BHT-EMR-API/ $username@$ip_address:/var/www/BHT-EMR-API
-sshpass -p $password rsync -r --progress /var/www/BHT-HIS-Core/ $username@$ip_address:/var/www/HIS-Core
+sshpass -p $password rsync -r --progress /var/www/HIS-Core/ $username@$ip_address:/var/www/HIS-Core
+sshpass -p $password rsync -r --progress /var/www/automatiq/VersionsScripts/ $username@$ip_address:/var/www/
+
+python3 /var/www/automatiq/Services/PushService.py 0 $ip_address $username $password

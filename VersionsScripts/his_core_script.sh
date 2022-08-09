@@ -18,19 +18,11 @@ cp config.json.example config.json
 echo "____________________________________________"
 echo "Coonfiguring IP address and Port in config.json"
 echo "____________________________________________"
-clear
-echo "____________________________________________"
-echo Enter IP address of the Facility:
-read ip_address
-echo "____________________________________________"
-echo Enter API port the facility uses:
-read api_port
-echo "____________________________________________"
-sed -i 's/0.0.0.0/'$ip_address'/g' config.json
-sed -i 's/3000/'$api_port'/g' config.json
+sed -i 's/0.0.0.0/'$1'/g' config.json
+sed -i 's/3000/'$2'/g' config.json
 clear
 echo "The following parameters have been ammended in config.json"
-echo IP address : $ip_address
-echo API port   : $api_port
+echo IP address : $1
+echo API port   : $2
 echo THANK YOU
 
