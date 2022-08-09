@@ -36,11 +36,11 @@ def update(
 ):
     try: 
         if app_id == 1:
-            call("./auto_update_emr_api.sh")
+            call("./UpdateScripts/auto_update_emr_api.sh")
         if app_id == 2:
-            call("./auto_update_his_core")
+            call("./UpdateScripts/auto_update_his_core")
         if app_id == 0:
-            call("./auto_update_both_modelus.sh")
+            call("./UpdateScripts/auto_update_both_modelus.sh")
     except Exception as e:
         print("error: ",e)
 
