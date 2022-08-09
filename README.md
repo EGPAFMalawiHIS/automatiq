@@ -11,7 +11,8 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 2. # install typer
    pip3 install typer
 3. # install paramiko
-   pip install paramiko
+   pip3 install -U pip
+   pip3 install paramiko
    
 4. # install sshpass
    sudo apt install sshpass
