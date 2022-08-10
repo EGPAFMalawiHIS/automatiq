@@ -30,6 +30,19 @@ def deploy(
     else:
         typer.echo("Deployment process canceled")   
 
+@app.command()
+def update(
+    app_id: int
+):
+    try: 
+        if app_id == 1:
+            call("./UpdateScripts/auto_update_emr_api.sh")
+        if app_id == 2:
+            call("./UpdateScripts/auto_update_his_core.sh")
+        if app_id == 0:
+            call("./UpdateScripts/auto_update_both_modelus.sh")
+    except Exception as e:
+        print("error: ",e)
 
 if __name__ == "__main__":
     app()
