@@ -27,5 +27,5 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
   python3 automatiq.py update 0
 
   [!important notice]
-  * make sure that the computer(local) you are using and the targeted computer(server) you have its public ssh key already copied
+  * make sure that the computer(local) you are using and the targeted computer(server), you have its public ssh key already copied
   * in other words, prior to running the above commands ("#Running updates"), you are able to login into the targedted server via ssh using you computer
