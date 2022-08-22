@@ -3,20 +3,8 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 
 
 # SET UP
-1. # install pip
-   sudo apt-get update
-   sudo apt-get -y install python3-pip
-   pip3 --version
-
-2. # install typer
-   pip3 install typer
-3. # install paramiko
-   pip3 install -U pip
-   pip3 install paramiko
-   
-4. # install sshpass
-   sudo apt install sshpass
-
+1. # install dependencies
+   sudo python3 install_dep.py
 
 # Running updates
 # updating BHT-EMR-API
@@ -28,4 +16,4 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 
   [!important notice]
   * make sure that the computer(local) you are using and the targeted computer(server), you have its public ssh key already copied
-  * in other words, prior to running the above commands ("#Running updates"), you are able to login into the targedted server via ssh using you computer
+  * in other words, Ensure you can access the target host via ssh on the command line before proceeding with the script
