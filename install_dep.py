@@ -40,7 +40,7 @@ if PRO_1.returncode == 0:
 
             #  installing sshpass for rsync
             if p5.returncode == 0:
-               p6 = subprocess.run(['sudo', 'apt', 'install', 'sshpass'], stdout=subprocess.PIPE)
+               p6 = subprocess.run(['sudo', 'apt-get', 'install', 'sshpass'], stdout=subprocess.PIPE)
                print(p6.stdout)
 
                if p6.returncode != 0:
