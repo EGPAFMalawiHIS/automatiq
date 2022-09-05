@@ -12,13 +12,13 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 
 # Running updates
   updating BHT-EMR-API
-  python3 automatiq.py update 1
+  `python3 automatiq.py update 1`
 
   updating HIS-Core
-  python3 automatiq.py update 2
+  `python3 automatiq.py update 2`
 
   update both BHT-EMR-API and HIS-core
-  python3 automatiq.py update 0
+  `python3 automatiq.py update 0`
 
   [!important notice]
   * the is intended to be installed on the users machine
