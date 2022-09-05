@@ -8,7 +8,7 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 
    while you are in `/var/www/automatiq` directory
 1. install dependencies
-   sudo python3 install_dep.py
+   `sudo python3 install_dep.py`
 
 # Running updates
   updating BHT-EMR-API
