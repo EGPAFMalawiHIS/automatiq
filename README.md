@@ -6,7 +6,7 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
    
    clone the repository into `/var/www` directory
 
-   while you are in /var/www/automatiq directory
+   while you are in `/var/www/automatiq` directory
 1. install dependencies
    sudo python3 install_dep.py
 
