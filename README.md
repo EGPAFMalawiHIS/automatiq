@@ -21,6 +21,6 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
   `python3 automatiq.py update 0`
 
   [!important notice]
-  * the is intended to be installed on the users machine
+  * the app is intended to be installed on the users machine
   * make sure that the computer(local) you are using and the targeted computer(server), you have its public ssh key already copied
   * in other words, Ensure you can access the target host via ssh on the command line before proceeding with the script
