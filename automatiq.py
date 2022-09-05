@@ -40,7 +40,7 @@ def update(
         if app_id == 2:
             call("./UpdateScripts/auto_update_his_core.sh")
         if app_id == 0:
-            call("./UpdateScripts/auto_update_both_modelus.sh")
+            call("./UpdateScripts/auto_update_both_modules.sh")
     except Exception as e:
         print("error: ",e)
 
