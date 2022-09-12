@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import subprocess
 
-#
+# list of dependencies to be installed
 dependencies_list = [
    'sudo apt-get update',
    'sudo apt-get -y install python3-pip',
