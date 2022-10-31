@@ -20,8 +20,3 @@ echo "Installing Local Gems"
 echo "____________________________________________"
 bundle install --local
 echo "____________________________________________"
-echo "running bin_update art"
-echo "____________________________________________"
-./bin/update_art_metadata.sh development
-echo THANK YOU
-
