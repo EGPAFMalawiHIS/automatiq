@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash --login
 echo "____________________________________________"
 echo "Entering BHT-EMR-API"
 echo "____________________________________________"
@@ -6,7 +6,7 @@ cd /var/www/BHT-EMR-API
 echo "____________________________________________"
 echo "Checkout to latest tag"
 echo "____________________________________________"
-git checkout v4.15.18 -f
+git checkout v4.16.2 -f
 echo "____________________________________________"
 echo "Describing Head"
 echo "____________________________________________"
