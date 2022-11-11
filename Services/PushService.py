@@ -10,11 +10,14 @@ def initParamiko(
     password: str,
     cmd: str
 ):
-    print(" executing update versions script")
+    print("___________________________________________________________________________________________________________________")
+    print(cmd.capitalize())
+    print("___________________________________________________________________________________________________________________")
     client = paramiko.client.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(host, username=username, password=password)
+    cmd = "echo $PATH; cd /var/www/BHT-EMR-API; /bin/bash --login -c \""+cmd+"\""
     _stdin, _stdout,_stderr = client.exec_command(cmd)
     print ("stderr: ", _stderr.readlines())
     print ("pwd: ", _stdout.readlines())
@@ -65,16 +68,20 @@ def updateVersion(
     password: str
 ):  
     try:
+        emr_api_cmds = [
+            '. /var/www/emr_api_script.sh',
+            './bin/update_art_metadata.sh development'
+        ]
         if app_id == 1:
-            cmd = ". /var/www/emr_api_script.sh"
-            initParamiko(ip_address, username, password, cmd)
+            for cmd in emr_api_cmds:
+                initParamiko(ip_address, username, password, cmd)
         if app_id == 2:
             cmd = ". /var/www/his_core_script.sh"
             initParamikoForHisCore(ip_address, username, password, cmd)
         if app_id == 0:
-            cmd = ". /var/www/emr_api_script.sh"
+            for cmd in emr_api_cmds:
+                initParamiko(ip_address, username, password, cmd)
             cmd2 = ". /var/www/his_core_script.sh"
-            initParamiko(ip_address, username, password, cmd)
             initParamikoForHisCore(ip_address, username, password, cmd2)
 
     except Exception as e:

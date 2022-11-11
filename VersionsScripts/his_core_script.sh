@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash --login
 echo "____________________________________________"
 echo "Changing directory"
 echo "____________________________________________"
@@ -6,7 +6,7 @@ cd /var/www/HIS-Core
 echo "____________________________________________"
 echo "Checkout to latest tag in Core"
 echo "____________________________________________"
-git checkout v1.2.9 -f
+git checkout v1.4.2 -f
 echo "____________________________________________"
 echo "Describing Head"
 echo "____________________________________________"
