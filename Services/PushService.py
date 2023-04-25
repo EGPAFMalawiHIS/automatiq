@@ -1,43 +1,44 @@
 from click import command
 import typer
 import paramiko
+import subprocess
 
 app = typer.Typer()
 
-def initParamiko(
-    host: str,
-    username: str,
-    password: str,
-    cmd: str
-):
+def UpdateAPI(host: str, username: str, password: str):
     print("___________________________________________________________________________________________________________________")
-    print(cmd.capitalize())
+    print(" Updating EMR-API Version")
     print("___________________________________________________________________________________________________________________")
     client = paramiko.client.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(host, username=username, password=password)
-    cmd = "echo $PATH; cd /var/www/BHT-EMR-API; /bin/bash --login -c \""+cmd+"\""
-    _stdin, _stdout,_stderr = client.exec_command(cmd)
-    print ("stderr: ", _stderr.readlines())
-    print ("pwd: ", _stdout.readlines())
+    
+    # define the commands to run in sequence
+    commands = [
+        'cd /var/www/BHT-EMR-API && pwd',
+        'cd /var/www/BHT-EMR-API && git checkout v4.17.1 -f',
+        'cd /var/www/BHT-EMR-API && git describe',
+        'cd /var/www/BHT-EMR-API && git describe > HEAD',
+        'cd /var/www/BHT-EMR-API && rm Gemfile.lock',
+        'cd /var/www/BHT-EMR-API && bundle install --local'
+    ]
+    
+    for cmd in commands:
+        # run the command using subprocess
+        subprocess.run(cmd, shell=True, check=True)
+        print("___________________________________________________________________________________________________________________")
+
+        
     client.close()
 
-def initParamikoForHisCore(
-    host: str,
-    username: str,
-    password: str,
-    cmd: str
-):
+def UpdateHisCore(host: str, username: str, password: str, cmd: str):
     try:
-        print(" executing update versions script")
-        client = paramiko.client.SSHClient()
-        client.load_system_host_keys()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(host, username=username, password=password)
-        print("###################################################")
-        print("########## Changing HIS-Core Version ##############")
-        print("###################################################")
+        print("___________________________________________________________________________________________________________________")
+        print(" Updating HIS-Core Version")
+        print("___________________________________________________________________________________________________________________")
+
+        print("")
         print("Enter IP address of the Facility:")
         try:
             input_ip_address = input("$> ")
@@ -49,14 +50,8 @@ def initParamikoForHisCore(
         except KeyboardInterrupt:
             print("")
 
-        try:
-            _stdin, _stdout,_stderr = client.exec_command(cmd+" "+input_ip_address+" "+input_api_port)
-            print ("stderr: ", _stderr.readlines())
-            print ("pwd: ", _stdout.readlines())
-        except Exception as e:
-            print(str(e))
-
-        client.close()
+        full_cmd = f"{cmd} {input_ip_address} {input_api_port}"
+        subprocess.run(full_cmd, shell=True, check=True)
     except Exception as e:
         print(str(e))
 
@@ -68,21 +63,17 @@ def updateVersion(
     password: str
 ):  
     try:
-        emr_api_cmds = [
-            '. /var/www/emr_api_script.sh',
-            './bin/update_art_metadata.sh development'
-        ]
+        cmd = ". /var/www/his_core_script.sh"
+
         if app_id == 1:
-            for cmd in emr_api_cmds:
-                initParamiko(ip_address, username, password, cmd)
+            UpdateAPI(ip_address, username, password)
+
         if app_id == 2:
-            cmd = ". /var/www/his_core_script.sh"
-            initParamikoForHisCore(ip_address, username, password, cmd)
+            UpdateHisCore(ip_address, username, password, cmd)
+
         if app_id == 0:
-            for cmd in emr_api_cmds:
-                initParamiko(ip_address, username, password, cmd)
-            cmd2 = ". /var/www/his_core_script.sh"
-            initParamikoForHisCore(ip_address, username, password, cmd2)
+            UpdateAPI(ip_address, username, password)
+            UpdateHisCore(ip_address, username, password, cmd)
 
     except Exception as e:
         print("error: ",e)

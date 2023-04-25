@@ -6,7 +6,7 @@ cd /var/www/HIS-Core
 echo "____________________________________________"
 echo "Checkout to latest tag in Core"
 echo "____________________________________________"
-git checkout v1.4.2 -f
+git checkout v1.8.2 -f
 echo "____________________________________________"
 echo "Describing Head"
 echo "____________________________________________"
@@ -16,7 +16,7 @@ echo "Copying config.json.example to config.json"
 echo "____________________________________________"
 cp config.json.example config.json
 echo "____________________________________________"
-echo "Coonfiguring IP address and Port in config.json"
+echo "Configuring IP address and Port in config.json"
 echo "____________________________________________"
 sed -i 's/0.0.0.0/'$1'/g' config.json
 sed -i 's/3000/'$2'/g' config.json
