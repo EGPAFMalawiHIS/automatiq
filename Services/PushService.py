@@ -2,6 +2,7 @@ from click import command
 import typer
 import paramiko
 import subprocess
+import json
 
 app = typer.Typer()
 
@@ -40,19 +41,39 @@ def UpdateHisCore(host: str, username: str, password: str):
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(host, username=username, password=password)
 
-    # prompt user for IP address and port number
-    ip = input("Enter API IP address: ")
-    port = input("Enter API port number: ")
+    # check if config.json file exists
+    stdin, stdout, stderr = client.exec_command('ls /var/www/HIS-Core')
+    files = stdout.readlines()
+    if 'config.json\n' not in files:
+        print('Error: config.json file not found in /var/www/HIS-Core directory')
+        print('copied config.json.example config.json')
+        subprocess.run('cd /var/www/HIS-Core && cp config.json.example config.json', shell=True, check=True)
 
-    # copy or modify config.json.example to config.json with user input
-    # check localhost and 3000 if it exists like below
-    # "apiURL": "localhost",
-	# "apiPort": "3000",
-    commands = [
-        f'cd /var/www/HIS-Core && cp config.json.example config.json',
-        f'sed -i \'s/"apiURL": "localhost",/"apiURL": "{ip}",/\' /var/www/HIS-Core/config.json',
-        f'sed -i \'s/"apiPort": "3000",/"apiPort": "{port}",/\' /var/www/HIS-Core/config.json'
-    ]
+    
+    # extract apiURL and apiPort values from config.json
+    stdin, stdout, stderr = client.exec_command('cat /var/www/HIS-Core/config.json')
+    config_str = stdout.read().decode('utf-8')
+    config = json.loads(config_str)
+    current_ip = config['apiURL']
+    current_port = config['apiPort']
+
+    commands = []
+    # prompt user to keep or change API IP address and port number
+    keep_current = input(f'Current API IP: {current_ip}, Port: {current_port}, in config.json. Do you want to change these values? (y/n): ')
+    if keep_current.lower() == 'y':
+        ip = input("Enter new API IP address: ")
+        port = input("Enter new API port number: ")
+    else:
+        ip = current_ip
+        port = current_port
+
+    # modify config.json with user input
+    if keep_current.lower() == 'y':
+        commands = [
+            f'cd /var/www/HIS-Core && cp config.json.example config.json',
+            f'sed -i \'s/"apiURL": "{current_ip}",/"apiURL": "{ip}",/\' /var/www/HIS-Core/config.json',
+            f'sed -i \'s/"apiPort": "{current_port}",/"apiPort": "{port}",/\' /var/www/HIS-Core/config.json'
+        ]
 
     commands += [
         'cd /var/www/HIS-Core && git checkout v1.8.2 -f',
@@ -68,7 +89,7 @@ def UpdateHisCore(host: str, username: str, password: str):
 
 
 @app.command()
-def updateVersion(app_id: int, ip_address: str, username: str, password: str):  
+def updateVersion(app_id: int, ip_address: str, username: str, password: str):
     try:
         if app_id == 1:
             UpdateAPI(ip_address, username, password)
@@ -81,7 +102,7 @@ def updateVersion(app_id: int, ip_address: str, username: str, password: str):
             UpdateHisCore(ip_address, username, password)
 
     except Exception as e:
-        print("error: ",e)
+        print("Error:", e)
 
 if __name__ == "__main__":
     app()
