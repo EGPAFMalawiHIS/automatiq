@@ -10,48 +10,53 @@ def UpdateAPI(host: str, username: str, password: str):
     print("___________________________________________________________________________________________________________________")
     print(" Updating EMR-API Version")
     print("___________________________________________________________________________________________________________________")
-    client = paramiko.client.SSHClient()
-    client.load_system_host_keys()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host, username=username, password=password)
+    ssh = paramiko.SSHClient()
+    # ssh.load_system_host_keys()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(host, username=username, password=password)
     
     # define the commands to run in sequence
     commands = [
-        'cd /var/www/BHT-EMR-API && pwd',
-        'cd /var/www/BHT-EMR-API && git checkout v4.17.1 -f',
-        'cd /var/www/BHT-EMR-API && git describe',
-        'cd /var/www/BHT-EMR-API && git describe > HEAD',
-        'cd /var/www/BHT-EMR-API && rm Gemfile.lock',
-        'cd /var/www/BHT-EMR-API && bundle install --local'
+        f'whoami',
+        f'cd /var/www/BHT-EMR-API && pwd',
+        f'cd /var/www/BHT-EMR-API && git checkout v4.17.1 -f',
+        f'cd /var/www/BHT-EMR-API && git describe',
+        f'cd /var/www/BHT-EMR-API && git describe > HEAD',
+        f'cd /var/www/BHT-EMR-API && rm Gemfile.lock',
+        f'cd /var/www/BHT-EMR-API && bundle install --local'
     ]
     
     for cmd in commands:
-        # run the command using subprocess
-        subprocess.run(cmd, shell=True, check=True)
+        stdin, stdout, stderr = ssh.exec_command(cmd)
+        for line in stdout.read().decode('utf-8').splitlines():
+            print(line)
+
+        for line in stderr.read().decode('utf-8').splitlines():
+            print(line)
         print("___________________________________________________________________________________________________________________")
  
-    client.close()
+    ssh.close()
 
 def UpdateHisCore(host: str, username: str, password: str):
     print("___________________________________________________________________________________________________________________")
     print(" Updating HIS-Core Version")
     print("___________________________________________________________________________________________________________________")
-    client = paramiko.client.SSHClient()
-    client.load_system_host_keys()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host, username=username, password=password)
+    ssh = paramiko.SSHClient()
+    # client.load_system_host_keys()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(host, username=username, password=password)
 
     # check if config.json file exists
-    stdin, stdout, stderr = client.exec_command('ls /var/www/HIS-Core')
+    stdin, stdout, stderr = ssh.exec_command('ls /var/www/HIS-Core')
     files = stdout.readlines()
     if 'config.json\n' not in files:
         print('Error: config.json file not found in /var/www/HIS-Core directory')
         print('copied config.json.example config.json')
-        subprocess.run('cd /var/www/HIS-Core && cp config.json.example config.json', shell=True, check=True)
+        ssh.exec_command('cd /var/www/HIS-Core && cp config.json.example config.json')
 
     
     # extract apiURL and apiPort values from config.json
-    stdin, stdout, stderr = client.exec_command('cat /var/www/HIS-Core/config.json')
+    stdin, stdout, stderr = ssh.exec_command('cat /var/www/HIS-Core/config.json')
     config_str = stdout.read().decode('utf-8')
     config = json.loads(config_str)
     current_ip = config['apiURL']
@@ -69,23 +74,29 @@ def UpdateHisCore(host: str, username: str, password: str):
 
     # modify config.json with user input
     if keep_current.lower() == 'y':
+        print(port)
+        print(ip)
         commands = [
+            f'whoami',
             f'cd /var/www/HIS-Core && cp config.json.example config.json',
             f'sed -i \'s/"apiURL": "{current_ip}",/"apiURL": "{ip}",/\' /var/www/HIS-Core/config.json',
             f'sed -i \'s/"apiPort": "{current_port}",/"apiPort": "{port}",/\' /var/www/HIS-Core/config.json'
         ]
 
     commands += [
-        'cd /var/www/HIS-Core && git checkout v1.8.2 -f',
-        'cd /var/www/HIS-Core && git describe > HEAD',
+        f'cd /var/www/HIS-Core && git checkout v1.8.2 -f',
+        f'cd /var/www/HIS-Core && git describe',
+        f'cd /var/www/HIS-Core && git describe > HEAD',
     ]
 
     for cmd in commands:
-        # run the command using subprocess
-        subprocess.run(cmd, shell=True, check=True)
+        stdin, stdout, stderr = ssh.exec_command(cmd)
+        for line in stdout.read().decode('utf-8').splitlines():
+            print(line)
+
         print("___________________________________________________________________________________________________________________")
 
-    client.close()
+    ssh.close()
 
 
 @app.command()
