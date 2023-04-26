@@ -5,6 +5,7 @@ import subprocess
 dependencies_list = [
    'sudo apt-get update',
    'sudo apt-get -y install python3-pip',
+   'pip3 install virtualenv',
    'pip3 install typer',
    'pip3 install -U pip',
    'pip3 install paramiko',
