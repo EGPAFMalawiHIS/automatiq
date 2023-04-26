@@ -1,12 +1,36 @@
 from click import command
 import typer
 import paramiko
-import subprocess
 import json
+import time
+import os
+import paramiko
 
 app = typer.Typer()
 
+def find_remote_bundle_dir(username, hostname, password):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(hostname=hostname, username=username, password=password)
+    home_dir = ssh.exec_command("echo $HOME")[1].read().decode().strip()
+    bundle_dir = os.path.join(home_dir)
+    command = f"find {bundle_dir} -name bundle"
+    stdin, stdout, stderr = ssh.exec_command(command)
+    results = stdout.readlines()
+    results = [result.strip() for result in results]
+    
+    matching_dirs = []
+    for bundle_dir in results:
+        command = f"grep -liE 'rvm|rbenv' {bundle_dir}/*"
+        stdin, stdout, stderr = ssh.exec_command(command)
+        rvm_rbenv_found = any(['rvm' in line.lower() or 'rbenv' in line.lower() for line in stdout.readlines()])
+        if not rvm_rbenv_found:
+            matching_dirs.append(bundle_dir)
+    
+    return matching_dirs
+
 def UpdateAPI(host: str, username: str, password: str):
+    # print(find_remote_bundle_dir(hostname=host, username=username, password=password))
     print("___________________________________________________________________________________________________________________")
     print(" Updating EMR-API Version")
     print("___________________________________________________________________________________________________________________")
@@ -17,24 +41,52 @@ def UpdateAPI(host: str, username: str, password: str):
     
     # define the commands to run in sequence
     commands = [
-        f'whoami',
-        f'cd /var/www/BHT-EMR-API && pwd',
-        f'cd /var/www/BHT-EMR-API && git checkout v4.17.1 -f',
-        f'cd /var/www/BHT-EMR-API && git describe',
-        f'cd /var/www/BHT-EMR-API && git describe > HEAD',
-        f'cd /var/www/BHT-EMR-API && rm Gemfile.lock',
-        f'cd /var/www/BHT-EMR-API && bundle install --local'
+        'whoami',
+        'cd /var/www/BHT-EMR-API && pwd',
+        'cd /var/www/BHT-EMR-API && git checkout v4.17.1 -f',
+        'cd /var/www/BHT-EMR-API && git describe',
+        'cd /var/www/BHT-EMR-API && git describe > HEAD',
+        'cd /var/www/BHT-EMR-API && rm Gemfile.lock',
     ]
     
     for cmd in commands:
         stdin, stdout, stderr = ssh.exec_command(cmd)
+        # while not stdout.channel.exit_status_ready():
+        #     time.sleep(1)
+
         for line in stdout.read().decode('utf-8').splitlines():
             print(line)
 
         for line in stderr.read().decode('utf-8').splitlines():
             print(line)
         print("___________________________________________________________________________________________________________________")
- 
+
+    remote_bundle_dirs = find_remote_bundle_dir(hostname=host, username=username, password=password)
+
+    print(f"Found {len(remote_bundle_dirs)} bundle directories on the remote server:")
+
+    for bundle_dir in remote_bundle_dirs:
+        print(f"- {bundle_dir}")
+
+    # Try each bundle path and see if it works
+    for bundle_path in remote_bundle_dirs:
+        bundle_install_cmd = f"cd /var/www/BHT-EMR-API && {bundle_path} install --local"
+        print(f"Trying bundle path {bundle_path}...")
+        print(bundle_install_cmd)
+
+        stdin, stdout, stderr = ssh.exec_command(bundle_install_cmd)
+        for line in stdout.read().decode('utf-8').splitlines():
+            print(line)
+        for line in stderr.read().decode('utf-8').splitlines():
+            print(line)
+
+        # Check the exit status of the command to see if it was successful
+        if stdout.channel.recv_exit_status() == 0:
+            print(f"Successfully installed bundles using {bundle_path}")
+            break
+        else:
+            print(f"Failed to install bundles using {bundle_path}")
+
     ssh.close()
 
 def UpdateHisCore(host: str, username: str, password: str):
@@ -77,7 +129,6 @@ def UpdateHisCore(host: str, username: str, password: str):
         print(port)
         print(ip)
         commands = [
-            f'whoami',
             f'cd /var/www/HIS-Core && cp config.json.example config.json',
             f'sed -i \'s/"apiURL": "{current_ip}",/"apiURL": "{ip}",/\' /var/www/HIS-Core/config.json',
             f'sed -i \'s/"apiPort": "{current_port}",/"apiPort": "{port}",/\' /var/www/HIS-Core/config.json'
