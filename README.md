@@ -7,18 +7,32 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
    clone the repository into `/var/www` directory
 
    while you are in `/var/www/automatiq` directory
-1. install dependencies
-   `sudo python3 install_dep.py`
+   
+# install dependencies
+
+
+       sudo python3 install_dep.py
+
+   after this command:
+
+   do:
+
+       virtualenv venv
+
+       source venv/bin/activate
 
 # Running updates
   updating BHT-EMR-API
-  `python3 automatiq.py update 1`
+
+       python3 automatiq.py update 1
 
   updating HIS-Core
-  `python3 automatiq.py update 2`
+
+       python3 automatiq.py update 2
 
   update both BHT-EMR-API and HIS-core
-  `python3 automatiq.py update 0`
+
+       python3 automatiq.py update 0
 
   [!important notice]
   * the app is intended to be installed on the users machine
