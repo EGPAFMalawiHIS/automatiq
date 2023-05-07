@@ -111,10 +111,13 @@ def UpdateHisCore(host: str, username: str, password: str):
     stdin, stdout, stderr = ssh.exec_command('cat /var/www/HIS-Core/config.json')
     config_str = stdout.read().decode('utf-8')
     config = json.loads(config_str)
+
     current_ip = config['apiURL']
     current_port = config['apiPort']
 
     commands = []
+    ip   = ''
+    port = ''
     # prompt user to keep or change API IP address and port number
     keep_current = input(f'Current API IP: {current_ip}, Port: {current_port}, in config.json. Do you want to change these values? (y/n): ')
     if keep_current.lower() == 'y':
@@ -126,10 +129,8 @@ def UpdateHisCore(host: str, username: str, password: str):
 
     # modify config.json with user input
     if keep_current.lower() == 'y':
-        print(port)
-        print(ip)
         commands = [
-            f'cd /var/www/HIS-Core && cp config.json.example config.json',
+            # f'cd /var/www/HIS-Core && cp config.json.example config.json',
             f'sed -i \'s/"apiURL": "{current_ip}",/"apiURL": "{ip}",/\' /var/www/HIS-Core/config.json',
             f'sed -i \'s/"apiPort": "{current_port}",/"apiPort": "{port}",/\' /var/www/HIS-Core/config.json'
         ]
