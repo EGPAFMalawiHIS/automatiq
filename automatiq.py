@@ -30,7 +30,7 @@ def deploy(
     else:
         typer.echo("Deployment process canceled")   
 
-@app.command()
+# @app.command()
 def update(
     app_id: int
 ):
