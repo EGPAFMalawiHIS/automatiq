@@ -29,6 +29,26 @@ def find_remote_bundle_dir(username, hostname, password):
     
     return matching_dirs
 
+def send_cmd_generic_fn(cmd: str, ssh: paramiko.SSHClient()):
+    stdin, stdout, stderr = ssh.exec_command(cmd)
+    for line in stdout.read().decode('utf-8').splitlines():
+        print(line)
+    for line in stderr.read().decode('utf-8').splitlines():
+        print(line)
+
+def find_remote_ruby_dir(username, hostname, password):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(hostname=hostname, username=username, password=password)
+    home_dir = ssh.exec_command("echo $HOME")[1].read().decode().strip()
+    ruby_dir = os.path.join(home_dir)
+    command = f"find {ruby_dir} -name ruby"
+    stdin, stdout, stderr = ssh.exec_command(command)
+    results = stdout.readlines()
+    results = [result.strip() for result in results]
+    
+    return results
+
 def UpdateAPI(host: str, username: str, password: str):
     # print(find_remote_bundle_dir(hostname=host, username=username, password=password))
     print("___________________________________________________________________________________________________________________")
@@ -87,6 +107,40 @@ def UpdateAPI(host: str, username: str, password: str):
         else:
             print(f"Failed to install bundles using {bundle_path}")
 
+    remote_ruby_dirs = find_remote_ruby_dir(hostname=host, username=username, password=password)
+
+    print(f"Found {len(remote_ruby_dirs)} ruby directories on the remote server:")
+
+    for ruby_dir in remote_ruby_dirs:
+        print(f"- {ruby_dir}")
+
+    for ruby_dir in remote_ruby_dirs:
+        migration_cmd = f"cd /var/www/BHT-EMR-API && {ruby_dir} bin/rails db:migrate"
+        print(f"Trying bundle path {migration_cmd}...")
+        print(migration_cmd)
+
+        send_cmd_generic_fn(migration_cmd, ssh)
+
+    # metadata upload
+    load_metadata_cmd = f"cd /var/www/BHT-EMR-API && cd bin/ && ./update_art_metadata.sh development"
+    send_cmd_generic_fn(load_metadata_cmd, ssh)
+    # Reload Nginx
+    reload_nginx_cmd = "systemctl reload nginx"
+    send_cmd_generic_fn(reload_nginx_cmd, ssh)
+    # Nginx Status
+    status_nginx_cmd = "systemctl status nginx"
+    send_cmd_generic_fn(status_nginx_cmd, ssh)
+    # Stop Puma service
+    stop_puma_cmd = "systemctl stop puma"
+    send_cmd_generic_fn(stop_puma_cmd, ssh)
+    # Start Puma service
+    start_puma_cmd = "systemctl start puma"
+    send_cmd_generic_fn(start_puma_cmd, ssh)
+    # Status Puma service
+    status_puma_cmd = "systemctl status puma"
+    send_cmd_generic_fn(status_puma_cmd, ssh) 
+
+    #close connection
     ssh.close()
 
 def UpdateHisCore(host: str, username: str, password: str):
