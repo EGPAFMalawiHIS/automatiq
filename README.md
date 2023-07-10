@@ -11,7 +11,7 @@ Intuitive and "cool" CLI that allows you to deploy Health Information Systems wi
 # install dependencies
 
 
-       sudo python3 install_dep.py
+       sudo python3 install.py
 
    after this command:
 
