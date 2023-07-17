@@ -63,7 +63,7 @@ def UpdateAPI(host: str, username: str, password: str):
     commands = [
         'whoami',
         'cd /var/www/BHT-EMR-API && pwd',
-        'cd /var/www/BHT-EMR-API && git checkout v4.17.1 -f',
+        'cd /var/www/BHT-EMR-API && git checkout v4.18.0 -f',
         'cd /var/www/BHT-EMR-API && git describe',
         'cd /var/www/BHT-EMR-API && git describe > HEAD',
         'cd /var/www/BHT-EMR-API && rm Gemfile.lock',
@@ -190,7 +190,7 @@ def UpdateHisCore(host: str, username: str, password: str):
         ]
 
     commands += [
-        f'cd /var/www/HIS-Core && git checkout v1.8.2 -f',
+        f'cd /var/www/HIS-Core && git checkout v1.11.0 -f',
         f'cd /var/www/HIS-Core && git describe',
         f'cd /var/www/HIS-Core && git describe > HEAD',
     ]
